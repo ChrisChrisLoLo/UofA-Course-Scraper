@@ -9,4 +9,4 @@ To run the script, first install BeautifulSoup4 using the command `pip install b
 Run the script python script and let it run in the background for approximately 6 hours.
 The slow run time is intentional, as the script sleeps every 2 seconds after making a request.
 This is to prevent the UofA servers from being spammed. Please do NOT shorten/remove these constraints. 
-Doing so can hypothically lead to your IP being blocked, better safe than sorry.
+Doing so can hypothically lead to your IP being blocked.
