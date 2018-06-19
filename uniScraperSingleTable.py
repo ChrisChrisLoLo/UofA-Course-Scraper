@@ -46,6 +46,8 @@ with open('UAlbertaCoursesSingleTable.csv','w',newline='') as csvfile:
         courseSubjectSoup = bs(courseSubjectPage, 'html.parser')
         subjectTable = courseSubjectSoup.find('table',{'class':'pure-table pure-table-striped'})
         subjectRows = subjectTable.findAll('tr')
+        #Clear out previous subjects
+        subjectLinks = {}
         for subjectRow in subjectRows:
             subjectCols = subjectRow.findAll('td')
             if(len(subjectCols)==2):
@@ -73,7 +75,7 @@ with open('UAlbertaCoursesSingleTable.csv','w',newline='') as csvfile:
                 else:
                     courseSummary = courseDiv.find('p').contents[2].strip()
                 csvWriter.writerow([facultyName,subjectNamePairs[subjectName],courseLetters,courseNumber,courseTitle,courseSummary])
-                #print(facultyName,subjectNamePairs[subjectName] ,courseLetters,courseNumber,courseTitle,courseSummary)
+                print(facultyName,subjectNamePairs[subjectName] ,courseLetters,courseNumber,courseTitle,courseSummary)
             print('.')
 print('Done!')
 
