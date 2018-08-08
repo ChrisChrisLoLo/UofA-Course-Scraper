@@ -5,11 +5,12 @@ The intention of the script is to use input scraped data into a SQL server, howe
 If doing so is proving to be hassly for me, a new script will be made generating multiple csv files.
 
 # How to Run:
-To run the script, first install BeautifulSoup4 using the command `pip install beautifulsoup4`.
+BeautifulSoup4 is required to run the script. This can be done by installing pipenv, typing `pipenv install`,`pipenv shell`,then `python3 uniScraperSingleTable.py`.
+Alternatively bs4 can be installed via pip via the command `pip install beautifulsoup4`.
 Run the script python script and let it run in the background for approximately half an hour.
 The slow run time is intentional, as the script sleeps every 2 seconds after making a request.
 This is to prevent the UofA servers from being spammed. Please do NOT shorten/remove these constraints. 
-Doing so can hypothically lead to your IP being blocked. If the script crashes the course page has either changed
+Doing so could hypothically lead to your IP being blocked. If the script crashes the course page html has either changed
 or bs4 is not installed.
 
 # Capabilities and Current Limitations:
