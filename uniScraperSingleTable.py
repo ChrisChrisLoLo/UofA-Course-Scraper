@@ -21,15 +21,12 @@ courseFacultySoup = bs(courseFacultyPage, 'html.parser')
 facultyTable = courseFacultySoup.find('table',{'class':'pure-table pure-table-striped'})
 faculties = facultyTable.findAll('td')
 
-facultyLinks = {}
+facultyLinks = []
 for faculty in faculties:
-    facultyLinks[faculty.find('a').contents[0]] = faculty.find('a').get('href')
+    facultyLinks.append((faculty.find('a').contents[0], faculty.find('a').get('href')))
 #print(facultyLinks)
 
 
-
-subjectLinks = {}
-subjectNamePairs = {}
 
 with open('UAlbertaCoursesSingleTable.csv','w',newline='') as csvfile:
     #Create csv table header
@@ -41,7 +38,7 @@ with open('UAlbertaCoursesSingleTable.csv','w',newline='') as csvfile:
 
     #Now use the faculty link stored in memory to traverse the given page to now gather the 
     #course subjects' codename, name, and link.
-    for facultyName, facultyURL in facultyLinks.items():
+    for facultyName, facultyURL in facultyLinks:
         courseSubjectPage = urlopen(UA_ROOT_URL+facultyURL)
 
         time.sleep(2)
@@ -49,7 +46,7 @@ with open('UAlbertaCoursesSingleTable.csv','w',newline='') as csvfile:
         subjectTable = courseSubjectSoup.find('table',{'class':'pure-table pure-table-striped'})
         subjectRows = subjectTable.findAll('tr')
         #Clear out previous subjects
-        subjectLinks = {}
+        subjectLinks = []
         for subjectRow in subjectRows:
             subjectCols = subjectRow.findAll('td')
             #make sure the row actually has content in it, since the web page can give blank rows 🙄
@@ -57,13 +54,12 @@ with open('UAlbertaCoursesSingleTable.csv','w',newline='') as csvfile:
                 #Get the subject code , name, and the link of each subject in the faculty page.
                 #Links will be opened in order to find all courses in each subject.
                 subjectATag = subjectCols[0]
-                subjectLongName = subjectCols[1]
+                subjectLongName = subjectCols[1].contents[0].strip()
                 subjectCode = subjectATag.find('a').contents[0]
-                subjectLinks[subjectCode] = subjectATag.find('a').get('href')
-                subjectNamePairs[subjectCode] = subjectLongName.contents[0].strip()
+                subjectLinks.append(subjectATag.find('a').get('href'))
 
         #Finally take each subject URL to get all the courses within that given subject
-        for subjectName, subjectURL in subjectLinks.items():
+        for subjectURL in subjectLinks:
             coursePage = urlopen(UA_ROOT_URL+subjectURL)
             time.sleep(2)
             courseSoup = bs(coursePage,'html.parser')
@@ -82,12 +78,7 @@ with open('UAlbertaCoursesSingleTable.csv','w',newline='') as csvfile:
                     courseSummary = courseDiv.find('p').contents[2].strip()
 
                 #Fill in course info as a csv row.
-                csvWriter.writerow([facultyName,subjectNamePairs[subjectName],subjectCode,courseNumber,courseTitle,courseSummary])
-                print(facultyName,subjectNamePairs[subjectName],subjectCode,courseNumber,courseTitle,courseSummary)
+                csvWriter.writerow([facultyName,subjectLongName,subjectCode,courseNumber,courseTitle,courseSummary])
+                print(facultyName,subjectLongName,subjectCode,courseNumber,courseTitle)
             print('.')
 print('Done!')
-
-
-
-
-#print(courseFacultySoup.find_all('a'))
