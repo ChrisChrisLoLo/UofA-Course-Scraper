@@ -45,8 +45,10 @@ with open('UAlbertaCoursesSingleTable.csv','w',newline='') as csvfile:
         courseSubjectSoup = bs(courseSubjectPage, 'html.parser')
         subjectTable = courseSubjectSoup.find('table',{'class':'pure-table pure-table-striped'})
         subjectRows = subjectTable.findAll('tr')
-        #Clear out previous subjects
+        #Clear out previous subjects and dictionaries. Dictionaries are to remember each subjectLink's name and code.
         subjectLinks = []
+        subjectLongNameDict = {}
+        subjectCodeDict = {}
         for subjectRow in subjectRows:
             subjectCols = subjectRow.findAll('td')
             #make sure the row actually has content in it, since the web page can give blank rows 🙄
@@ -54,13 +56,14 @@ with open('UAlbertaCoursesSingleTable.csv','w',newline='') as csvfile:
                 #Get the subject code , name, and the link of each subject in the faculty page.
                 #Links will be opened in order to find all courses in each subject.
                 subjectATag = subjectCols[0]
-                subjectLongName = subjectCols[1].contents[0].strip()
-                subjectCode = subjectATag.find('a').contents[0]
+                subjectLink = subjectATag.find('a').get('href')
+                subjectLongName[subjectLink] = subjectCols[1].contents[0].strip()
+                subjectCode[subjectLink] = subjectATag.find('a').contents[0]
                 subjectLinks.append(subjectATag.find('a').get('href'))
 
         #Finally take each subject URL to get all the courses within that given subject
-        for subjectURL in subjectLinks:
-            coursePage = urlopen(UA_ROOT_URL+subjectURL)
+        for subjectLink in subjectLinks:
+            coursePage = urlopen(UA_ROOT_URL+subjectLink)
             time.sleep(2)
             courseSoup = bs(coursePage,'html.parser')
             courseDivs = courseSoup.findAll('div',{'class':'claptrap-course'})
@@ -78,7 +81,7 @@ with open('UAlbertaCoursesSingleTable.csv','w',newline='') as csvfile:
                     courseSummary = courseDiv.find('p').contents[2].strip()
 
                 #Fill in course info as a csv row.
-                csvWriter.writerow([facultyName,subjectLongName,subjectCode,courseNumber,courseTitle,courseSummary])
-                print(facultyName,subjectLongName,subjectCode,courseNumber,courseTitle)
+                csvWriter.writerow([facultyName,subjectLongNameDict[subjectLink],subjectCodeDict[subjectLink],courseNumber,courseTitle,courseSummary])
+                print(facultyName,subjectLongNameDict[subjectLink],subjectCodeDict[subjectLink],courseNumber,courseTitle)
             print('.')
 print('Done!')
