@@ -57,8 +57,8 @@ with open('UAlbertaCoursesSingleTable.csv','w',newline='') as csvfile:
                 #Links will be opened in order to find all courses in each subject.
                 subjectATag = subjectCols[0]
                 subjectLink = subjectATag.find('a').get('href')
-                subjectLongName[subjectLink] = subjectCols[1].contents[0].strip()
-                subjectCode[subjectLink] = subjectATag.find('a').contents[0]
+                subjectLongNameDict[subjectLink] = subjectCols[1].contents[0].strip()
+                subjectCodeDict[subjectLink] = subjectATag.find('a').contents[0]
                 subjectLinks.append(subjectATag.find('a').get('href'))
 
         #Finally take each subject URL to get all the courses within that given subject
